@@ -15,7 +15,13 @@ import {
   writeShareState,
   type ShareState,
 } from '../src/state.js';
-import { FAKE_CLOUDFLARED, cleanupTempDirs, makeTempDir, waitFor } from './helpers.js';
+import {
+  CAN_RUN_FAKE_CLOUDFLARED,
+  FAKE_CLOUDFLARED,
+  cleanupTempDirs,
+  makeTempDir,
+  waitFor,
+} from './helpers.js';
 
 afterAll(cleanupTempDirs);
 
@@ -127,35 +133,38 @@ describe('process liveness', () => {
 });
 
 describe('cleanupStaleShares', () => {
-  it('removes shares whose process died, including temp files and cloudflared', async () => {
-    const env = await testEnv();
-    const tempParent = await makeTempDir();
-    const tempDir = path.join(tempParent, 'fshare-AbC123');
-    await mkdir(tempDir);
-    await writeFile(path.join(tempDir, 'photos.zip'), 'zip');
+  it.skipIf(!CAN_RUN_FAKE_CLOUDFLARED)(
+    'removes shares whose process died, including temp files and cloudflared',
+    async () => {
+      const env = await testEnv();
+      const tempParent = await makeTempDir();
+      const tempDir = path.join(tempParent, 'fshare-AbC123');
+      await mkdir(tempDir);
+      await writeFile(path.join(tempDir, 'photos.zip'), 'zip');
 
-    const orphan = spawn(FAKE_CLOUDFLARED, ['tunnel', '--url', 'http://127.0.0.1:1'], {
-      stdio: 'ignore',
-    });
-    const orphanPid = orphan.pid ?? 0;
-    await waitFor(() => isCloudflaredAlive(orphanPid));
+      const orphan = spawn(FAKE_CLOUDFLARED, ['tunnel', '--url', 'http://127.0.0.1:1'], {
+        stdio: 'ignore',
+      });
+      const orphanPid = orphan.pid ?? 0;
+      await waitFor(() => isCloudflaredAlive(orphanPid));
 
-    await writeShareState(
-      sampleState({ id: 'dead01', pid: await deadPid(), tempDir, cloudflaredPid: orphanPid }),
-      env,
-    );
-    await writeShareState(sampleState({ id: 'cafe01' }), env);
-    await writeFile(path.join(sharesDir(env), 'bad000.json'), 'garbage');
+      await writeShareState(
+        sampleState({ id: 'dead01', pid: await deadPid(), tempDir, cloudflaredPid: orphanPid }),
+        env,
+      );
+      await writeShareState(sampleState({ id: 'cafe01' }), env);
+      await writeFile(path.join(sharesDir(env), 'bad000.json'), 'garbage');
 
-    const { live, removed } = await cleanupStaleShares(env, (s) =>
-      Promise.resolve(s.id === 'cafe01'),
-    );
-    expect(live.map((s) => s.id)).toEqual(['cafe01']);
-    expect(removed.map((s) => s.id)).toEqual(['dead01']);
-    expect(existsSync(tempDir)).toBe(false);
-    expect(await readdir(sharesDir(env))).toEqual(['cafe01.json']);
-    await waitFor(() => !isProcessAlive(orphanPid));
-  });
+      const { live, removed } = await cleanupStaleShares(env, (s) =>
+        Promise.resolve(s.id === 'cafe01'),
+      );
+      expect(live.map((s) => s.id)).toEqual(['cafe01']);
+      expect(removed.map((s) => s.id)).toEqual(['dead01']);
+      expect(existsSync(tempDir)).toBe(false);
+      expect(await readdir(sharesDir(env))).toEqual(['cafe01.json']);
+      await waitFor(() => !isProcessAlive(orphanPid));
+    },
+  );
 
   it('never deletes directories fshare did not create', async () => {
     const env = await testEnv();

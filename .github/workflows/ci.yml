@@ -65,6 +65,38 @@ jobs:
           npx --yes "./$TARBALL" --help
           npx --yes "./$TARBALL" list --json
 
+  windows:
+    name: Windows (best effort)
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      # Tests that need the fake cloudflared or POSIX signals are skipped on Windows.
+      - run: npm test
+      - name: Install cloudflared
+        shell: pwsh
+        run: |
+          $dir = Join-Path $env:RUNNER_TEMP 'cloudflared'
+          New-Item -ItemType Directory -Force $dir | Out-Null
+          Invoke-WebRequest https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-windows-amd64.exe -OutFile (Join-Path $dir 'cloudflared.exe')
+          Add-Content $env:GITHUB_PATH $dir
+      - name: Pack and run the tarball like a user would
+        shell: bash
+        run: |
+          npm pack
+          TARBALL=$(ls skuljanze95-fshare-*.tgz)
+          npx --yes "./$TARBALL" --version
+          npx --yes "./$TARBALL" list --json
+          npx --yes "./$TARBALL" doctor
+      - name: End-to-end (real Cloudflare quick tunnel)
+        if: github.event_name != 'pull_request'
+        continue-on-error: true
+        run: npm run e2e
+
   e2e:
     name: End-to-end (real Cloudflare quick tunnel)
     # Quick tunnels have no SLA and are rate-limited, so run this on main only and never block on it.

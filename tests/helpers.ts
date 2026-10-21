@@ -10,6 +10,12 @@ export const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '
 export const FAKE_CLOUDFLARED = path.join(ROOT, 'tests', 'fixtures', 'fake-cloudflared.mjs');
 export const DIST_CLI = path.join(ROOT, 'dist', 'cli.js');
 
+/**
+ * Windows cannot spawn the fake cloudflared (a Node script) as an executable, so tests that need it
+ * run on macOS and Linux only. CI covers Windows with a real cloudflared in the e2e tests.
+ */
+export const CAN_RUN_FAKE_CLOUDFLARED = process.platform !== 'win32';
+
 // Git preserves the executable bit, but be defensive (e.g. after a zip download of the repo).
 if (existsSync(FAKE_CLOUDFLARED)) chmodSync(FAKE_CLOUDFLARED, 0o755);
 

@@ -11,7 +11,12 @@ import {
   tunnelFailureReason,
   type Tunnel,
 } from '../src/tunnel.js';
-import { FAKE_CLOUDFLARED, cleanupTempDirs, makeTempDir } from './helpers.js';
+import {
+  CAN_RUN_FAKE_CLOUDFLARED,
+  FAKE_CLOUDFLARED,
+  cleanupTempDirs,
+  makeTempDir,
+} from './helpers.js';
 
 const started: Tunnel[] = [];
 afterEach(async () => {
@@ -50,7 +55,7 @@ describe('cloudflared output parsing', () => {
   });
 });
 
-describe('startTunnel (fake cloudflared)', () => {
+describe.skipIf(!CAN_RUN_FAKE_CLOUDFLARED)('startTunnel (fake cloudflared)', () => {
   it('resolves with the URL once the connection is registered', async () => {
     const argsFile = path.join(await makeTempDir(), 'args.json');
     process.env.FAKE_CLOUDFLARED_ARGS_FILE = argsFile;

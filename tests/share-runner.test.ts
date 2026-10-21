@@ -13,6 +13,7 @@ import {
 } from '../src/share-runner.js';
 import { readShareState, type ShareState } from '../src/state.js';
 import {
+  CAN_RUN_FAKE_CLOUDFLARED,
   FAKE_CLOUDFLARED,
   captureIo,
   cleanupTempDirs,
@@ -68,7 +69,7 @@ async function startShare(inputPath: string, overrides: Partial<ShareRequest> = 
   return { io, home, result, state, stop, done };
 }
 
-describe('runShare', () => {
+describe.skipIf(!CAN_RUN_FAKE_CLOUDFLARED)('runShare', () => {
   it('serves a file and cleans up when stopped', async () => {
     const dir = await makeTempDir();
     const file = path.join(dir, 'notes.txt');
