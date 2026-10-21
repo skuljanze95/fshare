@@ -101,7 +101,7 @@ The CI matrix still covers Node 18 and 20. The newest vitest, vite, eslint and t
 1. Move the **Unreleased** notes in `CHANGELOG.md` under a new version heading.
 2. Bump the version with `npm version <patch|minor|major>`. This commits and creates the tag `vX.Y.Z`.
 3. Push the commit and the tag: `git push --follow-tags`.
-4. The **Release** workflow checks that the tag matches `package.json`, runs `npm publish --provenance` (which runs typecheck, lint, tests and build) unless that version is already on npm, and creates a GitHub release.
+4. The **Release** workflow checks that the tag matches `package.json`, runs `npm publish --provenance` (which runs typecheck, lint, tests and build) unless that version is already on npm, and creates a GitHub release with the version's changelog section as its notes.
 
 The workflow publishes through npm [trusted publishing](https://docs.npmjs.com/trusted-publishers), so no npm token is stored in GitHub. It is configured on the package's **Settings** page on npmjs.com: GitHub Actions, repository `skuljanze95/fshare`, workflow `release.yml`, "Allow npm publish". Packages published this way automatically get [provenance](https://docs.npmjs.com/generating-provenance-statements).
 

@@ -1,6 +1,6 @@
 {
   "name": "@skuljanze/fshare",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Share a local file or folder through a public download link, served from your own computer via Cloudflare Tunnel. Agent-friendly, zero dependencies.",
   "keywords": [
     "share",

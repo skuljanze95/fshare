@@ -44,6 +44,14 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       - name: Create GitHub release
-        run: gh release create "$GITHUB_REF_NAME" --title "$GITHUB_REF_NAME" --generate-notes --verify-tag
+        # Uses this version's section of CHANGELOG.md as the notes, or GitHub's generated notes.
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          awk -v heading="## [$VERSION]" 'index($0, heading) == 1 { found = 1; next } found && /^## \[/ { exit } found' CHANGELOG.md > "$RUNNER_TEMP/notes.md"
+          if grep -q '[^[:space:]]' "$RUNNER_TEMP/notes.md"; then
+            gh release create "$GITHUB_REF_NAME" --title "fshare $VERSION" --notes-file "$RUNNER_TEMP/notes.md" --verify-tag
+          else
+            gh release create "$GITHUB_REF_NAME" --title "fshare $VERSION" --generate-notes --verify-tag
+          fi
         env:
           GH_TOKEN: ${{ github.token }}
