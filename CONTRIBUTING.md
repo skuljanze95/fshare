@@ -103,9 +103,6 @@ The CI matrix still covers Node 18 and 20. The newest vitest, vite, eslint and t
 3. Push the commit and the tag: `git push --follow-tags`.
 4. The **Release** workflow checks that the tag matches `package.json`, runs `npm publish --provenance` (which runs typecheck, lint, tests and build) unless that version is already on npm, and creates a GitHub release.
 
-The workflow publishes in one of two ways:
+The workflow publishes through npm [trusted publishing](https://docs.npmjs.com/trusted-publishers), so no npm token is stored in GitHub. It is configured on the package's **Settings** page on npmjs.com: GitHub Actions, repository `skuljanze95/fshare`, workflow `release.yml`, "Allow npm publish". Packages published this way automatically get [provenance](https://docs.npmjs.com/generating-provenance-statements).
 
-- **Trusted publishing (recommended).** On npmjs.com, open the package settings, add a trusted publisher for GitHub Actions with repository `skuljanze95/fshare` and workflow `release.yml`. No secret is needed.
-- **Token.** Alternatively, create an npm automation token and store it as the `NPM_TOKEN` repository secret.
-
-Both publish with [provenance](https://docs.npmjs.com/generating-provenance-statements).
+npm requires the first publish through a newly added trusted publisher within 2 days, otherwise the configuration expires. If the release fails with an authentication error, check that page: delete an expired configuration, add it again with the values above, and release within 2 days. As a fallback, the workflow also accepts an npm token stored as the `NPM_TOKEN` repository secret.
