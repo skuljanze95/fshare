@@ -1,0 +1,66 @@
+name: Bug report
+description: Something doesn't work as documented.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a bug!
+
+        **Please do not paste share URLs**: they contain secret tokens that give access to files. For security problems, follow [SECURITY.md](https://github.com/skuljanze95/fshare/blob/main/SECURITY.md) instead of opening an issue.
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened?
+      description: Include the exact error message if there was one.
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      value: |
+        1.
+        2.
+        3.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect to happen?
+  - type: textarea
+    id: doctor
+    attributes:
+      label: Output of `fshare doctor`
+      description: Run `npx -y @skuljanze95/fshare doctor` and paste the result.
+      render: text
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: fshare version
+      description: Output of `fshare --version`
+    validations:
+      required: true
+  - type: dropdown
+    id: os
+    attributes:
+      label: Operating system
+      options: [macOS, Linux, Windows, Other]
+    validations:
+      required: true
+  - type: dropdown
+    id: runner
+    attributes:
+      label: How do you run fshare?
+      options: [npx, npm install -g, pnpm dlx, bunx, From a source checkout, Through an AI agent]
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs
+      description: |
+        Background shares log to `~/.fshare/logs/<id>.log`. Run with `FSHARE_DEBUG=1` to include cloudflared's logs.
+        Remove any URLs and tokens before pasting.
+      render: text
