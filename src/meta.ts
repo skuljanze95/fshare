@@ -19,7 +19,7 @@ function readPackageJson(): PackageJson {
 const pkg = readPackageJson();
 
 export const VERSION = pkg.version;
-/** npm package name, e.g. "@skuljanze95/fshare". The command itself is always "fshare". */
+/** npm package name, e.g. "@skuljanze/fshare". The command itself is always "fshare". */
 export const PACKAGE_NAME = pkg.name;
 export const REPO_URL = 'https://github.com/skuljanze95/fshare';
 /** Absolute path of the CLI entry point; --detach re-spawns it as a background process. */

@@ -37,6 +37,9 @@ const HOME_LOCATIONS: ReadonlyArray<readonly [string, string]> = [
   ['AppData', 'Windows app data and credentials'],
 ];
 
+/** Ordinary folders inside the locations above: Windows keeps the temp folder in AppData. */
+const HOME_EXCEPTIONS: readonly string[] = ['AppData/Local/Temp'];
+
 /** Absolute system locations. */
 const SYSTEM_LOCATIONS: ReadonlyArray<readonly [string, string]> = [
   ['/etc/shadow', 'system password hashes'],
@@ -86,20 +89,27 @@ function caseInsensitive(platform: NodeJS.Platform): boolean {
   return platform === 'darwin' || platform === 'win32';
 }
 
+/** Path functions for the platform being checked, so results do not depend on the host. */
+function pathFor(ctx: SafetyContext): path.PlatformPath {
+  return ctx.platform === 'win32' ? path.win32 : path.posix;
+}
+
 function normalize(p: string, ctx: SafetyContext): string {
-  const resolved = path.resolve(p).replace(/[\\/]+$/, '') || path.sep;
+  const paths = pathFor(ctx);
+  const resolved = paths.resolve(p).replace(/[\\/]+$/, '') || paths.sep;
   return caseInsensitive(ctx.platform) ? resolved.toLowerCase() : resolved;
 }
 
-function isInside(child: string, parent: string): boolean {
+function isInside(child: string, parent: string, ctx: SafetyContext): boolean {
   if (child === parent) return true;
-  const prefix = parent.endsWith(path.sep) ? parent : parent + path.sep;
+  const { sep } = pathFor(ctx);
+  const prefix = parent.endsWith(sep) ? parent : parent + sep;
   return child.startsWith(prefix);
 }
 
 function display(p: string, ctx: SafetyContext): string {
   if (p === ctx.home) return '~';
-  return p.startsWith(ctx.home + path.sep) ? `~${p.slice(ctx.home.length)}` : p;
+  return p.startsWith(ctx.home + pathFor(ctx).sep) ? `~${p.slice(ctx.home.length)}` : p;
 }
 
 /** Checks a single file or folder name (no path) against name-based rules. */
@@ -132,21 +142,25 @@ export function checkSensitivePath(
   ctx: SafetyContext,
   options: { isDirectory: boolean },
 ): SensitiveMatch | null {
+  const paths = pathFor(ctx);
   const normalizedTarget = normalize(target, ctx);
+  const isException = HOME_EXCEPTIONS.some((rel) =>
+    isInside(normalizedTarget, normalize(paths.join(ctx.home, rel), ctx), ctx),
+  );
   const locations = [
-    ...HOME_LOCATIONS.map(([rel, what]) => [path.join(ctx.home, rel), what] as const),
+    ...HOME_LOCATIONS.map(([rel, what]) => [paths.join(ctx.home, rel), what] as const),
     ...(ctx.platform === 'win32' ? [] : SYSTEM_LOCATIONS),
   ];
-  for (const [location, what] of locations) {
+  for (const [location, what] of isException ? [] : locations) {
     const normalizedLocation = normalize(location, ctx);
-    if (isInside(normalizedTarget, normalizedLocation)) {
+    if (isInside(normalizedTarget, normalizedLocation, ctx)) {
       return { reason: `it is inside ${display(location, ctx)} (${what})` };
     }
-    if (options.isDirectory && isInside(normalizedLocation, normalizedTarget)) {
+    if (options.isDirectory && isInside(normalizedLocation, normalizedTarget, ctx)) {
       return { reason: `it contains ${display(location, ctx)} (${what})` };
     }
   }
-  return checkSensitiveName(path.basename(target));
+  return checkSensitiveName(paths.basename(target));
 }
 
 /**

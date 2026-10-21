@@ -12,7 +12,7 @@ fshare serves **one file or folder** from this computer over a public HTTPS link
 Run exactly this, replacing `<path>`:
 
 ```bash
-npx -y @skuljanze95/fshare share <path> --json --detach --expires 1h
+npx -y @skuljanze/fshare share <path> --json --detach --expires 1h
 ```
 
 - `npx -y` skips the install prompt, which you cannot answer.
@@ -58,10 +58,10 @@ If the user set a password, remind them that the username is `fshare`. If they w
 ## Manage shares
 
 ```bash
-npx -y @skuljanze95/fshare list --json           # all active shares (JSON array)
-npx -y @skuljanze95/fshare status <id> --json    # one share, including download_count
-npx -y @skuljanze95/fshare stop <id>             # stop one share
-npx -y @skuljanze95/fshare stop --all            # stop everything
+npx -y @skuljanze/fshare list --json           # all active shares (JSON array)
+npx -y @skuljanze/fshare status <id> --json    # one share, including download_count
+npx -y @skuljanze/fshare stop <id>             # stop one share
+npx -y @skuljanze/fshare stop --all            # stop everything
 ```
 
 Stop shares as soon as the user says they are done, or when they ask you to.
@@ -75,7 +75,7 @@ Stop shares as soon as the user says they are done, or when they ask you to.
 | 2    | Bad arguments, **or a sensitive path was refused** | Fix the arguments. For a refused path, explain the risk; only add `--force` if the user explicitly confirms.                                                                                                               |
 | 3    | File or share not found                            | Check the path or id (`list --json`).                                                                                                                                                                                      |
 | 4    | cloudflared not installed                          | Tell the user to install it: macOS `brew install cloudflared`, Windows `winget install --id Cloudflare.cloudflared`, Linux see https://github.com/skuljanze95/fshare#installation. Do not install software without asking. |
-| 5    | Tunnel failed                                      | Retry once with `--protocol http2`. If it fails again, run `npx -y @skuljanze95/fshare doctor` and show the user the output.                                                                                               |
+| 5    | Tunnel failed                                      | Retry once with `--protocol http2`. If it fails again, run `npx -y @skuljanze/fshare doctor` and show the user the output.                                                                                                 |
 
 With `--json`, failures print `{"error":{"code":"…","message":"…","hint":"…","exit_code":N}}` on stdout.
 

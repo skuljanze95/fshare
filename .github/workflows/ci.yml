@@ -59,7 +59,7 @@ jobs:
       - name: Pack and run the tarball like a user would
         run: |
           npm pack
-          TARBALL=$(ls skuljanze95-fshare-*.tgz)
+          TARBALL=$(ls skuljanze-fshare-*.tgz)
           tar -tzf "$TARBALL"
           npx --yes "./$TARBALL" --version
           npx --yes "./$TARBALL" --help
@@ -88,7 +88,7 @@ jobs:
         shell: bash
         run: |
           npm pack
-          TARBALL=$(ls skuljanze95-fshare-*.tgz)
+          TARBALL=$(ls skuljanze-fshare-*.tgz)
           npx --yes "./$TARBALL" --version
           npx --yes "./$TARBALL" list --json
           npx --yes "./$TARBALL" doctor

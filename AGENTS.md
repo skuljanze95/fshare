@@ -18,7 +18,7 @@ When the user asks you to share, send, or give them a download link to a local f
 **Share.** The command returns immediately; the link keeps working in the background:
 
 ```bash
-npx -y @skuljanze95/fshare share <path> --json --detach --expires 1h
+npx -y @skuljanze/fshare share <path> --json --detach --expires 1h
 ```
 
 stdout is one JSON object, printed on a single line (formatted here for readability):
@@ -55,9 +55,9 @@ Folders are zipped automatically and shared as `<name>.zip`.
 **Manage:**
 
 ```bash
-npx -y @skuljanze95/fshare list --json          # active shares
-npx -y @skuljanze95/fshare status <id> --json   # details, including download_count
-npx -y @skuljanze95/fshare stop <id>            # or: stop --all
+npx -y @skuljanze/fshare list --json          # active shares
+npx -y @skuljanze/fshare status <id> --json   # details, including download_count
+npx -y @skuljanze/fshare stop <id>            # or: stop --all
 ```
 
 **Exit codes:**
@@ -80,7 +80,7 @@ On failure with `--json`, stdout is `{"error":{"code":"…","message":"…","hin
 - Anyone with the link can download the file until it expires. Prefer short expiry times, and use `--max-downloads 1` for a single recipient.
 - Always use `--detach` (otherwise the command blocks until the link expires) and `npx -y` (you cannot answer npx's install prompt).
 - Exit code 4: tell the user to install cloudflared (macOS: `brew install cloudflared`; Windows: `winget install --id Cloudflare.cloudflared`; Linux: https://github.com/skuljanze95/fshare#installation). Do not install software without asking.
-- Exit code 5: retry once with `--protocol http2`. If it still fails, run `npx -y @skuljanze95/fshare doctor` and show the user the result.
+- Exit code 5: retry once with `--protocol http2`. If it still fails, run `npx -y @skuljanze/fshare doctor` and show the user the result.
 - The link only works while this computer is on and online. Stop shares the user no longer needs.
 
 <!-- fshare:end -->

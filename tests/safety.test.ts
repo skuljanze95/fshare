@@ -12,6 +12,7 @@ import { cleanupTempDirs, makeTempDir } from './helpers.js';
 const home = '/Users/alice';
 const mac = { home, platform: 'darwin' as const };
 const linux = { home: '/home/bob', platform: 'linux' as const };
+const windows = { home: 'C:\\Users\\carol', platform: 'win32' as const };
 const file = { isDirectory: false };
 const dir = { isDirectory: true };
 
@@ -69,6 +70,26 @@ describe('checkSensitivePath', () => {
     expect(checkSensitivePath('/Users/alice/.ssh/config', mac, file)?.reason).toBe(
       'it is inside ~/.ssh (SSH keys)',
     );
+  });
+
+  it('handles Windows paths, allowing the temp folder inside AppData', () => {
+    expect(checkSensitivePath('C:\\Users\\carol\\.ssh\\id_ed25519', windows, file)?.reason).toBe(
+      'it is inside ~\\.ssh (SSH keys)',
+    );
+    expect(
+      checkSensitivePath('c:\\users\\CAROL\\AppData\\Roaming\\x.db', windows, file),
+    ).not.toBeNull();
+    expect(checkSensitivePath('C:\\Users\\carol', windows, dir)?.reason).toMatch(/contains/);
+    expect(
+      checkSensitivePath('C:\\Users\\carol\\AppData\\Local\\Temp\\report.pdf', windows, file),
+    ).toBeNull();
+    expect(
+      checkSensitivePath('C:\\Users\\carol\\AppData\\Local\\Temp\\build', windows, dir),
+    ).toBeNull();
+    expect(
+      checkSensitivePath('C:\\Users\\carol\\AppData\\Local\\Temp\\.env', windows, file),
+    ).not.toBeNull();
+    expect(checkSensitivePath('C:\\Users\\carol\\Documents\\report.pdf', windows, file)).toBeNull();
   });
 });
 

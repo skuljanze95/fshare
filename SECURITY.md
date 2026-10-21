@@ -18,7 +18,7 @@ You can expect an acknowledgement within **7 days**. We will keep you updated wh
 
 ## Supported versions
 
-Security fixes go into the latest release. Please upgrade (`npx -y @skuljanze95/fshare@latest`) before reporting.
+Security fixes go into the latest release. Please upgrade (`npx -y @skuljanze/fshare@latest`) before reporting.
 
 | Version | Supported |
 | ------- | --------- |

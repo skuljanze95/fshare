@@ -27,7 +27,7 @@ node dist/cli.js doctor
 node dist/cli.js share ./README.md
 ```
 
-`npm link` makes `fshare` point at your checkout globally; undo it with `npm unlink -g @skuljanze95/fshare`.
+`npm link` makes `fshare` point at your checkout globally; undo it with `npm unlink -g @skuljanze/fshare`.
 
 ## Scripts
 
@@ -41,6 +41,8 @@ node dist/cli.js share ./README.md
 | `npm run format`     | Formats everything with Prettier.                                                                                                            |
 | `npm run typecheck`  | Type-checks sources and tests.                                                                                                               |
 | `npm run e2e`        | Builds and runs `tests/e2e`: real cloudflared, real Cloudflare quick tunnel, real download. Skipped automatically if cloudflared is missing. |
+
+The README's demo GIF is recorded with [VHS](https://github.com/charmbracelet/vhs): run `npm run build`, then `vhs docs/demo.tape`.
 
 ## How the code is organized
 
@@ -99,7 +101,7 @@ The CI matrix still covers Node 18 and 20. The newest vitest, vite, eslint and t
 1. Move the **Unreleased** notes in `CHANGELOG.md` under a new version heading.
 2. Bump the version with `npm version <patch|minor|major>`. This commits and creates the tag `vX.Y.Z`.
 3. Push the commit and the tag: `git push --follow-tags`.
-4. The **Release** workflow checks that the tag matches `package.json`, runs `npm publish --provenance` (which runs typecheck, lint, tests and build), and creates a GitHub release.
+4. The **Release** workflow checks that the tag matches `package.json`, runs `npm publish --provenance` (which runs typecheck, lint, tests and build) unless that version is already on npm, and creates a GitHub release.
 
 The workflow publishes in one of two ways:
 

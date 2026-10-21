@@ -21,6 +21,8 @@ const HAS_ZIP = process.platform !== 'win32' && hasCommand('zip');
 let root: string;
 let outside: string;
 const big = randomBytes(300_000);
+/** Checks that names with glob characters are archived literally. Windows does not allow "*". */
+const STAR = process.platform === 'win32' ? 'star.txt' : 'star*.txt';
 
 beforeAll(async () => {
   const base = await makeTempDir();
@@ -33,7 +35,7 @@ beforeAll(async () => {
   await writeFile(path.join(root, '.hidden'), 'hidden\n');
   await writeFile(path.join(root, 'empty.txt'), '');
   await writeFile(path.join(root, 'résumé ü.txt'), 'unicode\n');
-  await writeFile(path.join(root, 'star*.txt'), 'wildcard\n');
+  await writeFile(path.join(root, STAR), 'wildcard\n');
   await writeFile(path.join(root, '-dash.txt'), 'dash\n');
   await writeFile(path.join(root, '[brackets].txt'), 'brackets\n');
   await writeFile(path.join(root, 'sub', 'big.bin'), big);
@@ -49,7 +51,7 @@ const EXPECTED_FILES = [
   'a.txt',
   'empty.txt',
   'résumé ü.txt',
-  'star*.txt',
+  STAR,
   'sub/big.bin',
   'sub/deeper/z.txt',
 ];
@@ -73,7 +75,7 @@ async function verifyArchive(zipPath: string): Promise<void> {
   expect(existsSync(path.join(top, 'empty-dir'))).toBe(true);
   expect(existsSync(path.join(top, 'link-to-outside.txt'))).toBe(false);
   expect(await readFile(path.join(top, 'a.txt'), 'utf8')).toBe('alpha\n');
-  expect(await readFile(path.join(top, 'star*.txt'), 'utf8')).toBe('wildcard\n');
+  expect(await readFile(path.join(top, STAR), 'utf8')).toBe('wildcard\n');
   expect(Buffer.compare(await readFile(path.join(top, 'sub', 'big.bin')), big)).toBe(0);
 }
 

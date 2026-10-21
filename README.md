@@ -2,27 +2,24 @@
 
 **Share a file or folder from your computer through a public download link. One command, no account, no upload.**
 
-[![npm](https://img.shields.io/npm/v/@skuljanze95/fshare)](https://www.npmjs.com/package/@skuljanze95/fshare)
+[![npm](https://img.shields.io/npm/v/@skuljanze/fshare)](https://www.npmjs.com/package/@skuljanze/fshare)
 [![CI](https://github.com/skuljanze95/fshare/actions/workflows/ci.yml/badge.svg)](https://github.com/skuljanze95/fshare/actions/workflows/ci.yml)
-[![Node.js](https://img.shields.io/node/v/@skuljanze95/fshare)](https://nodejs.org)
+[![Node.js](https://img.shields.io/node/v/@skuljanze/fshare)](https://nodejs.org)
 [![dependencies](https://img.shields.io/badge/dependencies-0-brightgreen)](package.json)
-[![license](https://img.shields.io/npm/l/@skuljanze95/fshare)](LICENSE)
+[![license](https://img.shields.io/npm/l/@skuljanze/fshare)](LICENSE)
 
-<!--
-  Demo GIF placeholder. Record it with VHS (https://github.com/charmbracelet/vhs):
-    vhs docs/demo.tape
-  then replace this comment with:
-    ![fshare demo](docs/demo.gif)
--->
+<!-- Recorded with VHS from docs/demo.tape. The absolute URL makes the GIF show on npmjs.com too. -->
+
+![fshare demo: sharing a file, listing shares and stopping them](https://raw.githubusercontent.com/skuljanze95/fshare/main/docs/demo.gif)
 
 ```console
-$ npx -y @skuljanze95/fshare share ./report.pdf
+$ npx -y @skuljanze/fshare share ./report.pdf
 Starting Cloudflare tunnel ...
 ✔ Sharing report.pdf (1.2 MB). Anyone with this link can download it:
 https://protest-behaviour-attempted-enquiries.trycloudflare.com/2wP0OEeaorLMrQjaD4_MHXLJE2FnfYM7/report.pdf
   Expires    in 1h (2026-10-21 10:10)
   Downloads  unlimited
-  Stop       press Ctrl+C, or run: npx @skuljanze95/fshare stop 421379
+  Stop       press Ctrl+C, or run: npx @skuljanze/fshare stop 421379
 Download 1 completed (1.2 MB to 203.0.113.7).
 ```
 
@@ -30,7 +27,7 @@ fshare serves the file **directly from your computer** through a [Cloudflare qui
 
 It is built for people **and AI agents**: predictable output, a JSON mode, no interactive prompts and meaningful exit codes.
 
-> **Package name:** the npm name `fshare` was already taken, so the package is published as **`@skuljanze95/fshare`**. The command it installs is still called `fshare`.
+> **Package name:** the npm name `fshare` was already taken, so the package is published as **`@skuljanze/fshare`**. The command it installs is still called `fshare`.
 
 ## Contents
 
@@ -120,27 +117,27 @@ cloudflared --version
 No installation is needed. Run it with `npx`, which comes with Node.js:
 
 ```bash
-npx -y @skuljanze95/fshare share ./file.pdf
+npx -y @skuljanze/fshare share ./file.pdf
 ```
 
 The `-y` skips npx's one-time "Ok to proceed?" question. The same works with other package runners:
 
 ```bash
-pnpm dlx @skuljanze95/fshare share ./file.pdf
-bunx @skuljanze95/fshare share ./file.pdf
+pnpm dlx @skuljanze/fshare share ./file.pdf
+bunx @skuljanze/fshare share ./file.pdf
 ```
 
 If you use it often, install it globally and type `fshare`:
 
 ```bash
-npm i -g @skuljanze95/fshare
+npm i -g @skuljanze/fshare
 fshare share ./file.pdf
 ```
 
 ### 3. Verify your setup
 
 ```bash
-npx -y @skuljanze95/fshare doctor
+npx -y @skuljanze/fshare doctor
 ```
 
 ```text
@@ -163,7 +160,7 @@ Anything marked `FAIL` comes with a line explaining how to fix it.
 
 ```bash
 brew install cloudflared                              # 1. once (see Installation for Linux and Windows)
-npx -y @skuljanze95/fshare share ./report.pdf         # 2. prints a link
+npx -y @skuljanze/fshare share ./report.pdf         # 2. prints a link
 # 3. send the link to someone, then press Ctrl+C to stop sharing
 ```
 
@@ -171,7 +168,7 @@ Would you rather keep using your terminal while sharing? Add `--detach`, and sto
 
 ## Usage
 
-The examples below use `fshare`. If you did not install it globally, write `npx -y @skuljanze95/fshare` instead of `fshare`.
+The examples below use `fshare`. If you did not install it globally, write `npx -y @skuljanze/fshare` instead of `fshare`.
 
 | Command                         | What it does                                          |
 | ------------------------------- | ----------------------------------------------------- |
@@ -331,7 +328,7 @@ Checks the Node.js version, cloudflared (and its version), `zip`, network access
 fshare gives coding agents a way to hand you files they produced, such as a report, a build or a generated image, as a link. The command an agent should run is:
 
 ```bash
-npx -y @skuljanze95/fshare share <path> --json --detach --expires 1h
+npx -y @skuljanze/fshare share <path> --json --detach --expires 1h
 ```
 
 - `-y` matters: agents cannot answer npx's "Ok to proceed?" prompt.
@@ -416,7 +413,7 @@ Read [SECURITY.md](SECURITY.md) for the full threat model and how to report a vu
 
 ## Troubleshooting
 
-Start with `npx -y @skuljanze95/fshare doctor`. It checks most of the problems below for you.
+Start with `npx -y @skuljanze/fshare doctor`. It checks most of the problems below for you.
 
 | Problem                                                                  | What to do                                                                                                                                                                                                                      |
 | ------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -430,7 +427,7 @@ Start with `npx -y @skuljanze95/fshare doctor`. It checks most of the problems b
 | **`401` / password prompt**                                              | The username is `fshare`; the password is the one passed with `--password` (or `FSHARE_PASSWORD`).                                                                                                                              |
 | **Port already in use**                                                  | fshare never uses a fixed port: it picks a free one each time, so just retry. cloudflared also opens a local metrics port (20241–20245); a conflict there is harmless.                                                          |
 | **The link stopped working while I was away**                            | Your computer probably went to sleep. Use `--keep-awake`, keep the lid open and the charger connected. On macOS you can also enable _System Settings → Battery → Options → Prevent automatic sleeping when the display is off_. |
-| **`npx` runs an old version or behaves oddly**                           | Run `npx -y @skuljanze95/fshare@latest …`, or clear npx's cache: `rm -rf ~/.npm/_npx` (Windows: delete `%LocalAppData%\npm-cache\_npx`).                                                                                        |
+| **`npx` runs an old version or behaves oddly**                           | Run `npx -y @skuljanze/fshare@latest …`, or clear npx's cache: `rm -rf ~/.npm/_npx` (Windows: delete `%LocalAppData%\npm-cache\_npx`).                                                                                          |
 | **`Refusing to share … because …`** (exit code 2)                        | That path looks like it contains secrets. If you are sure, add `--force`.                                                                                                                                                       |
 | **The download count doesn't go up**                                     | Only _completed_ downloads count. Previews, `HEAD` requests and interrupted downloads don't.                                                                                                                                    |
 | **Quick tunnels fail and you also use named Cloudflare tunnels**         | A `config.yml` in `~/.cloudflared/` can interfere with quick tunnels. Rename it temporarily and try again.                                                                                                                      |
@@ -441,8 +438,8 @@ Still stuck? [Open an issue](https://github.com/skuljanze95/fshare/issues/new/ch
 ## Uninstall
 
 ```bash
-fshare stop --all                 # or: npx -y @skuljanze95/fshare stop --all
-npm rm -g @skuljanze95/fshare     # only if you installed it globally
+fshare stop --all                 # or: npx -y @skuljanze/fshare stop --all
+npm rm -g @skuljanze/fshare     # only if you installed it globally
 rm -rf ~/.fshare                  # state and logs
 rm -rf ~/.npm/_npx                # optional: clear npx's cache
 brew uninstall cloudflared        # optional (Windows: winget uninstall Cloudflare.cloudflared)
